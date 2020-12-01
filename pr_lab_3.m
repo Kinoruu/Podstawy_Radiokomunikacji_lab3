@@ -17,7 +17,7 @@ for i = 1 : 1 : 6
     fTXlosRX(i) = 2 * pi * f * (d(i) ./ c); %LOS
     prpolos(i) = (1 ./ d(i)) .* exp(-1i .* fTXlosRX(1,i));
     absprpolos(1,i) = (abs(prpolos(1,i))) .^ 2;
-    absprpo(1,i) = absprpolos(1,i);
+    absprpo(i,1) = absprpolos(1,i);
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     dsc(i) = hypot(d(i), s_max);
@@ -33,13 +33,13 @@ for i = 1 : 1 : 6
     prpopo = ((a ./ dpo(i)) .* exp(-1i .* fTXpoRX));
     prposcp = ((a ./ dscp(i)) .* exp(-1i .* fTXscpRX));
     absprposc = (abs(prposc))^2;
-    absprpo(2,i) = absprposc;
+    absprpo(i,2) = absprposc;
     absprposu = (abs(prposu))^2;
-    absprpo(3,i) = absprposu;
+    absprpo(i,3) = absprposu;
     absprpopo = (abs(prpopo))^2;
-    absprpo(4,i) = absprpopo;
+    absprpo(i,4) = absprpopo;
     absprposcp = (abs(prposcp))^2;
-    absprpo(5,i) = absprposcp;
+    absprpo(i,5) = absprposcp;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     dscsc(i) = hypot(d(i), (2 * s_max)); %ściana + ściana
     dsupo(i) = hypot(d(i), (2 * h_max)); %sufit/podłoga + podłoga/sufit
@@ -51,11 +51,11 @@ for i = 1 : 1 : 6
     prposupo = (((a * a) ./ dsupo(i)) .* exp(-1i .* fTXsupoRX));
     prposcscp = (((a * a) ./ dscscp(i)) .* exp(-1i .* fTXscscpRX));
     absprposcsc = (abs(prposcsc))^2;
-    absprpo(6,i) = absprposcsc;
+    absprpo(i,6) = absprposcsc;
     absprposupo = (abs(prposupo))^2;
-    absprpo(7,i) = absprposupo;
+    absprpo(i,7) = absprposupo;
     absprposcscp = (abs(prposcscp))^2;
-    absprpo(8,i) = absprposcscp;
+    absprpo(i,8) = absprposcscp;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     dscscsc(i) = hypot(d(i), (3 * s_max)); %ściana + ściana + ściana
     dsuposu(i) = hypot(d(i), (2 * (h_max + (h_max - h_anten)))); %sufit + podłoga + sufit
@@ -70,13 +70,13 @@ for i = 1 : 1 : 6
     prposuposu = (((a * a * a) ./ dposupo(i)) .* exp(-1i .* fTXposupoRX));
     prposcscscp = (((a * a * a) ./ dscscscp(i)) .* exp(-1i .* fTXscscscpRX));
     absprposcscsc = (abs(prposcscsc))^2;
-    absprpo(9,i) = absprposcscsc;
+    absprpo(i,9) = absprposcscsc;
     absprpoposupo = (abs(prpoposupo))^2;
-    absprpo(10,i) = absprpoposupo;
+    absprpo(i,10) = absprpoposupo;
     absprposuposu = (abs(prposuposu))^2;
-    absprpo(11,i) = absprposuposu;
+    absprpo(i,11) = absprposuposu;
     absprposcscscp = (abs(prposcscscp))^2;
-    absprpo(12,i) = absprposcscscp;
+    absprpo(i,12) = absprposcscscp;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     dscscscsc(i) = hypot(d(i), (4 * s_max)); %ściana + ściana + ściana + ściana
     dsuposupo(i) = hypot(d(i), (4 * h_max)); %sufit/podłoga + podłoga/sufit + sufit/podłoga + podłoga/sufit
@@ -88,17 +88,17 @@ for i = 1 : 1 : 6
     prposuposupo = (((a * a) ./ dsuposupo(i)) .* exp(-1i .* fTXsuposupoRX));
     prposcscscscp = (((a * a) ./ dscscscscp(i)) .* exp(-1i .* fTXscscscscpRX));
     absprposcscscsc = (abs(prposcscscsc))^2;
-    absprpo(13,i) = absprposcscscsc;
+    absprpo(i,13) = absprposcscscsc;
     absprposuposupo = (abs(prposuposupo))^2;
-    absprpo(14,i) = absprposuposupo;
+    absprpo(i,14) = absprposuposupo;
     absprposcscscscp = (abs(prposcscscscp))^2;
-    absprpo(15,i) = absprposcscscscp;
+    absprpo(i,15) = absprposcscscscp;
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 k = 15 * length(d);
-ds = ([d, dsc, dsu, dpo, dscp, dscsc, dsupo, dscscp, dscscsc, dsuposu, dposupo, dscscscp]);
-ds = reshape(1:k, 15,6);
-Tauds = ds / c;
+ds = ([d, dsc, dsu, dpo, dscp, dscsc, dsupo, dscscp, dscscsc, dsuposu, dposupo, dscscscp, dscscscsc, dsuposupo, dscscscscp]);
+dss = reshape(ds, 6,15);
+Tauds = dss / c;
 %Tauds = [Taud Taudsc Taudsu Taudpo Taudscp Taudscsc Taudsupo Taudscscp Taudscscsc Taudsuposu Taudposupo Taudscscscp];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % deltaTaudsc = Taudsc - Taud;
@@ -113,13 +113,16 @@ Tauds = ds / c;
 % deltaTaudposupo = Taudposupo - Taud;
 % deltaTaudscscscp = Taudscscscp - Taud;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-deltaTauds = Tauds - Tauds(1,:);
-PrxPr1 = absprpo ./ absprpolos;
+deltaTauds = Tauds - Tauds(:,1);
+absprpoloss = reshape(absprpolos,[],1);
+PrxPr1 = absprpo ./ absprpoloss;
 for i = 1 : 1 : 6
-    x = deltaTauds(:,i);
-    y = PrxPr1(:,i);
+    x = deltaTauds(i,:);
+    y = PrxPr1(i,:);
     subplot(2,3,i)
+    %figure
     stem(x, y)
+    set(gca,'yscal','log')
     title(['Profil kanału dla d =  ', num2str(d(i))]);
     xlabel('τ [μs]');
     ylabel('Pr/Po [dB]');
@@ -127,11 +130,12 @@ end
 figure
 hold on
 for i = 1 : 1 : 6
-    x = deltaTauds(:,i);
-    y = PrxPr1(:,i);
+    x = deltaTauds(i,:);
+    y = PrxPr1(i,:);
     %subplot(2,3,i)
     %figure
     stem(x, y,'filled')
+    set(gca,'yscal','log')
     %title(['Profil kanału dla d =  ', num2str(d(i))]);
     xlabel('τ [μs]');
     ylabel('Pr/Po [dB]');
