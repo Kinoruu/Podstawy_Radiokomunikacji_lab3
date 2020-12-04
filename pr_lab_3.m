@@ -13,15 +13,15 @@ h_anten = 1;                  %wysokość anteny
 d = [0.5 1 1.5 2 2.5 2.8];
 absprpo = [];
 for i = 1 : 1 : 6
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%los
     fTXlosRX(i) = 2 * pi * f * (d(i) ./ c); %LOS
     prpolos(i) = (1 ./ d(i)) .* exp(-1i .* fTXlosRX(1,i));
     absprpolos(1,i) = (abs(prpolos(1,i))) .^ 2;
     absprpo(i,1) = absprpolos(1,i);
 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%1-krotne
     dsc(i) = hypot(d(i), s_max);
-    dsu(i) = hypot(d(i), (2 * (h_max - 1)));
+    dsu(i) = hypot(d(i), (2 * (h_max - h_anten)));
     dpo(i) = hypot (d(i), (2 * h_anten));
     dscp(i) = (2 * d_max) - d(i);
     fTXscRX = 2 * pi * f * (dsc(i) ./ c); %ściana
@@ -40,7 +40,7 @@ for i = 1 : 1 : 6
     absprpo(i,4) = absprpopo;
     absprposcp = (abs(prposcp))^2;
     absprpo(i,5) = absprposcp;
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%2-krotne
     dscsc(i) = hypot(d(i), (2 * s_max)); %ściana + ściana
     dsupo(i) = hypot(d(i), (2 * h_max)); %sufit/podłoga + podłoga/sufit
     dscscp(i) = (2 * d_max) + d(i); % %tył + przód w lini LOS
@@ -56,7 +56,7 @@ for i = 1 : 1 : 6
     absprpo(i,7) = absprposupo;
     absprposcscp = (abs(prposcscp))^2;
     absprpo(i,8) = absprposcscp;
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%3-krotne
     dscscsc(i) = hypot(d(i), (3 * s_max)); %ściana + ściana + ściana
     dsuposu(i) = hypot(d(i), (2 * (h_max + (h_max - h_anten)))); %sufit + podłoga + sufit
     dposupo(i) = hypot(d(i), (3 * (h_max + h_anten))); %podłoga + sufit + podłoga
@@ -77,16 +77,16 @@ for i = 1 : 1 : 6
     absprpo(i,11) = absprposuposu;
     absprposcscscp = (abs(prposcscscp))^2;
     absprpo(i,12) = absprposcscscp;
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%4-krotne
     dscscscsc(i) = hypot(d(i), (4 * s_max)); %ściana + ściana + ściana + ściana
     dsuposupo(i) = hypot(d(i), (4 * h_max)); %sufit/podłoga + podłoga/sufit + sufit/podłoga + podłoga/sufit
     dscscscscp(i) = (4 * d_max) + d(i); % %tył + przód w lini LOS
     fTXscscscscRX = 2 * pi * f * (dscscscsc(i) ./ c); 
     fTXsuposupoRX = 2 * pi * f * (dsuposupo(i) ./ c); 
     fTXscscscscpRX = 2 * pi * f * (dscscscscp(i) ./ c); 
-    prposcscscsc = (((a * a) ./ dscscscsc(i)) .* exp(-1i .* fTXscscscscRX));
-    prposuposupo = (((a * a) ./ dsuposupo(i)) .* exp(-1i .* fTXsuposupoRX));
-    prposcscscscp = (((a * a) ./ dscscscscp(i)) .* exp(-1i .* fTXscscscscpRX));
+    prposcscscsc = (((a * a * a * a) ./ dscscscsc(i)) .* exp(-1i .* fTXscscscscRX));
+    prposuposupo = (((a * a * a * a) ./ dsuposupo(i)) .* exp(-1i .* fTXsuposupoRX));
+    prposcscscscp = (((a * a * a * a) ./ dscscscscp(i)) .* exp(-1i .* fTXscscscscpRX));
     absprposcscscsc = (abs(prposcscscsc))^2;
     absprpo(i,13) = absprposcscscsc;
     absprposuposupo = (abs(prposuposupo))^2;
@@ -124,8 +124,8 @@ for i = 1 : 1 : 6
     stem(x, y)
     set(gca,'yscal','log')
     title(['Profil kanału dla d =  ', num2str(d(i))]);
-    xlabel('τ [μs]');
-    ylabel('Pr/Po [dB]');
+    xlabel('τ [s]');
+    ylabel('Pr/Po');
 end
 figure
 hold on
@@ -137,8 +137,8 @@ for i = 1 : 1 : 6
     stem(x, y,'filled')
     set(gca,'yscal','log')
     %title(['Profil kanału dla d =  ', num2str(d(i))]);
-    xlabel('τ [μs]');
-    ylabel('Pr/Po [dB]');
+    xlabel('τ [s]');
+    ylabel('Pr/Po ');
     legend('d = 0.5','d = 1','d = 1.5','d = 2','d = 2.5','d = 2.8')
 end
 hold off
@@ -153,7 +153,7 @@ figure
 stem(d,TauRMS)
 title('Wykres wartości pierwiastka ze średniokwadratowego rozrzutu opóźnień w funkcji odległości odbiornika od nadajnika');
 xlabel('Odległość [m]');
-ylabel('τrms [dB]');
+ylabel('τrms [s]');
 
 for i = 1 : 1 : 6
     Bc50(i) = 1 / (5 .* TauRMS(i));
@@ -162,4 +162,13 @@ figure
 stem(d,Bc50)
 title('Wykres pasma koherencji');
 xlabel('Odległość [m]');
-ylabel('Bc [Hz]');
+ylabel('Bc50 [Hz]');
+
+for i = 1 : 1 : 6
+    Bc90(i) = 1 / (50 .* TauRMS(i));
+end
+figure
+stem(d,Bc90)
+title('Wykres pasma koherencji');
+xlabel('Odległość [m]');
+ylabel('Bc90 [Hz]');
